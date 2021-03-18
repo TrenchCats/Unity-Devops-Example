@@ -38,6 +38,8 @@ jobs:
          projectPath: ${{ env.PROJECT_PATH }}
          testMode: all
          customParameters: "-nographics"
+         githubToken: ${{ secrets.GITHUB_TOKEN }}
+         checkName: Test Results (All)
       
       # Upload Results
       - name: Upload Results
