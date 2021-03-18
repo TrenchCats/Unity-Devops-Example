@@ -4,45 +4,45 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+ UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+ UNITY_VERSION: ${{ 2020.1.15f1 }}
+ PROJECT_PATH: Test
+
 jobs:
   testsAllModes:
-    name: Test in ${{ matrix.testMode }}
+    name: Run EditMode and PlayMode Tests ✨
     runs-on: ubuntu-latest
     strategy:
      fail-fast: false
-     matrix:
-      projectPath:
-       - Test
-      testMode:
-       - playmode
-       - editmode
     steps:
       # Checkout code
-      - uses: actions/checkout@v2.3.4
+      - name: Checkout Code
+        uses: actions/checkout@v2.3.4
       
       # Cache Library Files
-      - uses: actions/cache@v2.1.4
+      - name: Cache
+        uses: actions/cache@v2.1.4
         with:
-         path: ${{ matrix.projectPath }}/Library
-         key: Library-${{ matrix.projectPath }}
+         path: ${{ env.projectPath }}/Library
+         key: Library-${{ env.projectPath }}
          restore-keys: |
           Library-
       
       # Run Tests
-      - uses: game-ci/unity-test-runner@v2.0-alpha-3
+      - name: Run All Tests
+        uses: game-ci/unity-test-runner@v2.0-alpha-3
         id: tests
-        env:
-         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
-         projectPath: ${{ matrix.projectPath }}
-         testMode: ${{ matrix.testMode }}
-         artifactsPath: ${{ matrix.testMode }}-artifacts
-         githubToken: ${{ secrets.GITHUB_TOKEN }}
-         checkName: ${{ matrix.testMode }} Test Results
+         unityVersion: ${{ env.UNITY_VERSION }}
+         projectPath: ${{ env.projectPath }}
+         testMode: all
+         customParameters: "-nographics"
       
       # Upload Results
-      - uses: actions/upload-artifact@v2.2.2
+      - name: Upload Results
+        uses: actions/upload-artifact@v2.2.2
         if: always()
         with:
-         name: Test Results for ${{ matrix.testMode }}
+         name: Test Results (All)
          path: ${{ steps.tests.outputs.artifactsPath }}
