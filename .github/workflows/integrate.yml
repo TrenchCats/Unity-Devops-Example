@@ -18,10 +18,10 @@ jobs:
        - editmode
     steps:
       # Checkout code
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
       
       # Cache Library Files
-      - uses: action/cache@v2
+      - uses: actions/cache@v2.1.4
         with:
          path: ${{ matrix.projectPath }}/Library
          key: Library-${{ matrix.projectPath }}
@@ -29,7 +29,7 @@ jobs:
           Library-
       
       # Run Tests
-      - uses: game-ci/unity-test-runner@v2
+      - uses: game-ci/unity-test-runner@v2.0-alpha-3
         id: tests
         env:
          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -41,7 +41,7 @@ jobs:
          checkName: ${{ matrix.testMode }} Test Results
       
       # Upload Results
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v2.2.2
         if: always()
         with:
          name: Test Results for ${{ matrix.testMode }}
