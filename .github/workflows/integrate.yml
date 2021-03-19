@@ -10,7 +10,7 @@ env:
  PROJECT_PATH: Test
 
 jobs:
-  testsAllModes:
+  test:
     name: Run EditMode and PlayMode Tests ✨
     runs-on: ubuntu-latest
     strategy:
@@ -48,3 +48,22 @@ jobs:
         with:
          name: Test Results (All)
          path: ${{ steps.tests.outputs.artifactsPath }}
+ 
+  linter:
+    name: Lint code base 🖥️
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repo
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # Perform Linting
+      - name: Perform Linting
+        uses: github/super-linter@v3
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_CSHARP: true
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
