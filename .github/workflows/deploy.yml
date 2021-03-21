@@ -29,10 +29,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        projectPath:
-          - ${{ env.PROJECT_PATH }}
-        unityVersion:
-          - ${{ env.UNITY_VERSION }}
         targetPlatform:
           - StandaloneOSX
           - StandaloneWindows
@@ -49,10 +45,10 @@ jobs:
       - name: Cache files 
         uses: actions/cache@v2.1.4
         with:
-          path: ${{ matrix.projectPath }}/Library
-          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
+          path: ${{ env.PROJECT_PATH }}/Library
+          key: Library-${{ env.PROJECT_PATH }}-${{ matrix.targetPlatform }}
           restore-keys: |
-            Library-${{ matrix.projectPath }}-
+            Library-${{ env.PROJECT_PATH }}-
             Library-
       
       # Build
@@ -60,8 +56,8 @@ jobs:
         uses: game-ci/unity-builder@v2.0-alpha-6
         with:
           buildName: Example Project
-          projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
+          projectPath: ${{ env.PROJECT_PATH }}
+          unityVersion: ${{ env.UNITY_VERSION }}
           targetPlatform: ${{ matrix.targetPlatform }}
       
       # Upload artifacts
