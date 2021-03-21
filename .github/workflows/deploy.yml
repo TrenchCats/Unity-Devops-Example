@@ -3,9 +3,27 @@ name: Deploy
 on:
   workflow_dispatch:
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  UNITY_VERSION: 2020.1.15f1
+  PROJECT_PATH: Test
 
+jobs:
+  checklicense:
+    name: Check for Unity License
+    runs-on: ubuntu-latest
+    outputs:
+      is_unity_license_set: ${{ steps.checklicense_job.outputs.is_unity_license_set }}
+    steps: 
+      - name: Check whether Unity Activation requests should be done
+        id: checklicense_job
+        run: |
+          echo "Skip activation job: ${{ env.UNITY_LICENSE != '' }}"
+          echo "::set-output name=is_unity_license_set::${{ env.UNITY_LICENSE != '' }}"
+
+  build:
+    name: Create Unity Build
+    runs-on: ubuntu-latest
+    needs: [checklicense]
     steps:
       - uses: actions/checkout@v2
