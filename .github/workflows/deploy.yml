@@ -2,6 +2,11 @@ name: Deploy
 
 on:
   workflow_dispatch:
+    inputs:
+      level:
+        description: 'Version for Release (Allowed: major, minor, patch)'
+        default: 'minor'
+        required: true
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -9,6 +14,31 @@ env:
   PROJECT_PATH: Test
 
 jobs:
+  bump-semvar:
+    name: Create New Semantic Tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v2.3.4
+
+      - name: Get Latest Tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+        if: ${{ github.event.inputs.level != '' }}
+        with:
+          semver_only: true
+
+      - name: Bump Semantic Version
+        uses: actions-ecosystem/action-bump-semver@v1
+        id: bump-semver
+        if: ${{ github.event.inputs.level != '' }}
+        with:
+          current_version: ${{ steps.get-latest-tag.outputs.tag }}
+          level: ${{ github.event.inputs.level }}
+
+      - name: Send Bumped Semvar
+        run: echo "Semvar => ${{ steps.bump-semver.outputs.new_version }}"
+
   checklicense:
     name: Check for Unity License
     runs-on: ubuntu-latest
