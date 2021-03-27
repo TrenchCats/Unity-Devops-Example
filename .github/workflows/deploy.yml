@@ -46,10 +46,10 @@ jobs:
     name: Check for Unity License
     runs-on: ubuntu-latest
     outputs:
-      is_unity_license_set: ${{ steps.checklicense_job.outputs.is_unity_license_set }}
+      is_unity_license_set: ${{ steps.check-license.outputs.is_unity_license_set }}
     steps: 
       - name: Check whether Unity Activation requests should be done
-        id: checklicense_job
+        id: check-license
         run: |
           echo "Skip activation job: ${{ env.UNITY_LICENSE != '' }}"
           echo "::set-output name=is_unity_license_set::${{ env.UNITY_LICENSE != '' }}"
