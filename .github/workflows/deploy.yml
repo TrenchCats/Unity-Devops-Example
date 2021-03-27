@@ -122,3 +122,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           exclude_types: other,doc,chore
+          config_file: .github/changelog-config.js
