@@ -17,6 +17,8 @@ jobs:
   bump-semvar:
     name: Create New Semantic Tag
     runs-on: ubuntu-latest
+    outputs:
+      semvar_version: ${{ steps.bump-semvar.outputs.semvar_version }}
     steps:
       - name: Checkout Project
         uses: actions/checkout@v2.3.4
@@ -37,7 +39,9 @@ jobs:
           level: ${{ github.event.inputs.level }}
 
       - name: Send Bumped Semvar
-        run: echo "Semvar => ${{ steps.bump-semver.outputs.new_version }}"
+        run: |
+          echo "Semvar => ${{ steps.bump-semver.outputs.new_version }}"
+          echo "::set-output name=semvar_version::${{ steps.bump-semver.outputs.new_version }}"
 
   checklicense:
     name: Check for Unity License
@@ -55,7 +59,7 @@ jobs:
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
     needs: [checklicense, bump-semvar]
-    if: needs.checklicense.outputs.is_unity_license_set == 'true'
+    if: needs.checklicense.outputs.is_unity_license_set == 'true' && needs.bump-semvar.outputs.bump-semvar != ''
     strategy:
       fail-fast: false
       matrix:
@@ -89,6 +93,8 @@ jobs:
           projectPath: ${{ env.PROJECT_PATH }}
           unityVersion: ${{ env.UNITY_VERSION }}
           targetPlatform: ${{ matrix.targetPlatform }}
+          versioning: Custom
+          version: ${{ needs.bump-semvar.outputs.bump-semvar }}
       
       # Upload artifacts
       - name: Upload Artifacts
