@@ -43,7 +43,7 @@ jobs:
           echo "Semvar => ${{ steps.bump-semver.outputs.new_version }}"
           echo "::set-output name=semvar_version::${{ steps.bump-semver.outputs.new_version }}"
 
-  checklicense:
+  check-license:
     name: Check for Unity License
     runs-on: ubuntu-latest
     outputs:
@@ -58,8 +58,8 @@ jobs:
   build:
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
-    needs: [checklicense, bump-semvar]
-    if: needs.checklicense.outputs.is_unity_license_set == 'true' && needs.bump-semvar.outputs.bump-semvar != ''
+    needs: [check-license, bump-semvar]
+    if: ${{ needs.check-license.outputs.is_unity_license_set == 'true' & needs.bump-semvar.outputs.semvar_version != '' }}
     strategy:
       fail-fast: false
       matrix:
