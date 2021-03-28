@@ -134,3 +134,13 @@ jobs:
             ${{ steps.changelog.outputs.changelog }}
           draft: false
           prerelease: false
+    
+    # Upload Files to Release
+      - name: Upload Files to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/*.zip
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
