@@ -90,7 +90,35 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           exclude_types: other,doc,chore
           config_file: .github/changelog-config.js
+    
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [generate-changelog]
+    steps:
+      # Checkout Project
+      - name: Checkout Project
+        uses: actions/checkout@v2.3.4
+        with:
+          lfs: true
       
+      # Download Artifacts
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: Build
+          path: build
+
+      # Display structure of uploaded builds
+      - name: Display structure of uploaded builds
+        run: ls build
+      
+      # Zip the artifacts
+      - name: Zip artifacts
+        run: |
+          cd build
+          for file in $(ls -I "*.zip"); do zip -r "${file}.zip" "$file"; done
+    
       # Create Release
       - name: Create Release
         id: create_release
@@ -101,7 +129,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
-            ${{ steps.changelog.outputs.changelog }}
+            ${{ steps.generate-changelog.outputs.changelog }}
           draft: false
           prerelease: false
     
