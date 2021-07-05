@@ -1,0 +1,22 @@
+name: Build and Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "version: the tag version you want to create (e.g. 1.0.0)"
+        required: true
+
+env:
+  VERSION: ${{ github.event.inputs.version }}
+
+jobs:
+  build:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+        with:
+          lfts: true
+      - run: echo ${{ env.VERSION }}
