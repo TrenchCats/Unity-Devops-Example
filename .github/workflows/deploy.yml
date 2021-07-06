@@ -170,7 +170,7 @@ jobs:
           tag_name: ${{ steps.bump-semver.outputs.new_version }}
           release_name: Release ${{ steps.bump-semver.outputs.new_version }}
           body: |
-            ${{ needs.generate-changelog.outputs.changelog }}
+            ${{ steps.changelog.outputs.changelog }}
           draft: false
           prerelease: false
     
