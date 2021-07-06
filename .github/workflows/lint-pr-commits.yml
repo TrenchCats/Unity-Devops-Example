@@ -1,4 +1,4 @@
-name: Validate Pull Request
+name: Lint Pull Request Commits
 
 on:
   pull_request:
