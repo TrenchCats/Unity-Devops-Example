@@ -22,7 +22,7 @@ jobs:
       
       # Cache Library Files
       - name: Cache
-        uses: actions/cache@v2.1.4
+        uses: actions/cache@v2.1.6
         with:
          path: ${{ env.projectPath }}/Library
          key: Library-${{ env.projectPath }}
@@ -31,7 +31,7 @@ jobs:
       
       # Run Tests
       - name: Run All Tests
-        uses: game-ci/unity-test-runner@v2.0-alpha-3
+        uses: game-ci/unity-test-runner@v2.0-alpha-6
         id: tests
         with:
          unityVersion: ${{ env.UNITY_VERSION }}
@@ -43,7 +43,7 @@ jobs:
       
       # Upload Results
       - name: Upload Results
-        uses: actions/upload-artifact@v2.2.2
+        uses: actions/upload-artifact@v2.2.4
         if: always()
         with:
          name: Test Results (All)
@@ -55,13 +55,13 @@ jobs:
     steps:
       # Checkout repo
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           fetch-depth: 0
 
       # Perform Linting
       - name: Perform Linting
-        uses: github/super-linter@v3
+        uses: github/super-linter@v4.7.3
         env:
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_CSHARP: true
