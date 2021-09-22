@@ -11,11 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions-ecosystem/action-release-label@v1
+      - uses: actions-ecosystem/action-release-label@v1.2.0
         id: release-label
         if: ${{ startsWith(github.event.label.name, 'release/') }}
 
-      - uses: actions-ecosystem/action-get-latest-tag@v1
+      - uses: actions-ecosystem/action-get-latest-tag@v1.1.0
         id: get-latest-tag
         if: ${{ steps.release-label.outputs.level != null }}
         with:
