@@ -37,7 +37,7 @@ jobs:
          unityVersion: ${{ env.UNITY_VERSION }}
          projectPath: ${{ env.PROJECT_PATH }}
          testMode: all
-         customParameters: "-nographics"
+         customParameters: -nographics -debugCodeOptimization -enableCodeCoverage -coverageResultsPath ./coverage-results -coverageOptions generateAdditionalMetrics
          githubToken: ${{ secrets.GITHUB_TOKEN }}
          checkName: Test Results (All)
       
@@ -48,6 +48,14 @@ jobs:
         with:
          name: Test Results (All)
          path: ${{ steps.tests.outputs.artifactsPath }}
+      
+      - name: Upload Codecov Report
+        uses: codecov/codecov-action@v2
+        with:
+          name: Test Coverage (All)
+          flags: automated
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage-results/**/*.xml
  
   linter:
     name: Lint code base 🖥️
