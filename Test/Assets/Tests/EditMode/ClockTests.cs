@@ -42,7 +42,7 @@ namespace Tests
         public void Clock_Should_Return_Current_Time(int hour, int minute)
         {
             Clock clock = new Clock(hour, minute);
-            string currentTime = clock.GetTimeString();
+            string currentTime = clock.TimeString;
             Assert.AreEqual(currentTime, $"{ hour }:{minute}");
         }
     }
