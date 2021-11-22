@@ -55,7 +55,7 @@ jobs:
           name: Test Coverage (All)
           flags: automated
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: coverage-results/**/*.xml
+          files: ${{ env.PROJECT_PATH }}/coverage-results/**/*.xml
  
   linter:
     name: Lint code base 🖥️
