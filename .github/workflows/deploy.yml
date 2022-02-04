@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - main
-    tags:
-      - release/major
-      - release/minor
-      - release/patch
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -38,18 +34,21 @@ jobs:
         if: ${{ steps.get-merged-pull-request.outputs.title != null }}
         with:
           labels: ${{ steps.get-merged-pull-request.outputs.labels }}
+      
+      - name: Exit if no tags found
+        if: ${{ steps.release-label.outputs.level == null }}
+        run: |
+          exit 1
 
       - name: Get Latest Tag
         uses: actions-ecosystem/action-get-latest-tag@v1.1.0
         id: get-latest-tag
-        if: ${{ steps.release-label.outputs.level != null }}
         with:
           semver_only: true
 
       - name: Bump Semver
         uses: actions-ecosystem/action-bump-semver@v1
         id: bump-semver
-        if: ${{ steps.release-label.outputs.level != null }}
         with:
           current_version: ${{ steps.get-latest-tag.outputs.tag }}
           level: ${{ steps.release-label.outputs.level }}
@@ -57,6 +56,7 @@ jobs:
   check-license:
     name: Check for Unity License
     runs-on: ubuntu-latest
+    needs: [bump-semver]
     outputs:
       is_unity_license_set: ${{ steps.check-license.outputs.is_unity_license_set }}
     steps: 
@@ -69,7 +69,7 @@ jobs:
   build:
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
-    needs: [check-license, bump-semver]
+    needs: [check-license]
     if: ${{ needs.check-license.outputs.is_unity_license_set == 'true' }}
     strategy:
       fail-fast: false
