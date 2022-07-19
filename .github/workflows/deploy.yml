@@ -1,10 +1,11 @@
-name: Build and Deploy
+name: Build and Deploy to GitHub
 
 on:
   push:
     branches:
       - main
-
+  pull_request:
+    types: [opened, reopened, synchronize]
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   UNITY_VERSION: 2020.1.15f1
@@ -113,6 +114,5 @@ jobs:
         if: ${{ needs.bump-semver.outputs.version != null }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          number: ${{ needs.bump-semver.outputs.number }}
           body: |
-            The new version [${{ needs.bump-semver.outputs.version }}](https://github.com/${{ github.repository }}/releases/tag/${{ needs.bump-semver.outputs.version }}) has been released :tada:
+            The new version [${{ steps.create_release.outputs.tag_name }}](https://github.com/${{ github.repository }}/releases/tag/${{ steps.create_release.outputs.tag_name }}) has been released :tada:
