@@ -1,62 +1,20 @@
-name: Build and Deploy
+name: Build and Deploy to GitHub
 
 on:
   push:
     branches:
       - main
-
+  pull_request:
+    types: [opened, reopened, synchronize]
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   UNITY_VERSION: 2020.1.15f1
   PROJECT_PATH: Test
 
 jobs:
-  bump-semver:
-    name: Bump Semantic Version
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.bump-semver.outputs.new_version }}
-      title: ${{ steps.get-merged-pull-request.outputs.title }}
-      number: ${{ steps.get-merged-pull-request.outputs.number }}
-    steps:
-      - name: Checkout Project
-        uses: actions/checkout@v2.4.2
-
-      - name: Get Merged Pull Request
-        uses: actions-ecosystem/action-get-merged-pull-request@v1.0.1
-        id: get-merged-pull-request
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Get Pull Request Release Label
-        uses: actions-ecosystem/action-release-label@v1.2.0
-        id: release-label
-        if: ${{ steps.get-merged-pull-request.outputs.title != null }}
-        with:
-          labels: ${{ steps.get-merged-pull-request.outputs.labels }}
-      
-      - name: Exit if no tags found
-        if: ${{ steps.release-label.outputs.level == null }}
-        run: |
-          exit 1
-
-      - name: Get Latest Tag
-        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
-        id: get-latest-tag
-        with:
-          semver_only: true
-
-      - name: Bump Semver
-        uses: actions-ecosystem/action-bump-semver@v1
-        id: bump-semver
-        with:
-          current_version: ${{ steps.get-latest-tag.outputs.tag }}
-          level: ${{ steps.release-label.outputs.level }}
-  
   check-license:
     name: Check for Unity License
     runs-on: ubuntu-latest
-    needs: [bump-semver]
     outputs:
       is_unity_license_set: ${{ steps.check-license.outputs.is_unity_license_set }}
     steps: 
@@ -113,26 +71,12 @@ jobs:
   create-release:
     name: Create Release
     runs-on: ubuntu-latest
-    needs: [build, bump-semver]
+    needs: [build]
+    strategy:
+      fail-fast: true
     steps:
       - name: Checkout Project
         uses: actions/checkout@v2.3.4
-
-      - name: Push New Tag
-        uses: actions-ecosystem/action-push-tag@v1.0.0
-        if: ${{ needs.bump-semver.outputs.version != null }}
-        with:
-          tag: ${{ needs.bump-semver.outputs.version }}
-          message: "${{ needs.bump-semver.outputs.version }}: PR #${{ needs.bump-semver.outputs.number }} ${{ needs.bump-semver.outputs.title }}"
-
-      - name: Create Changelog
-        id: changelog
-        uses: loopwerk/tag-changelog@v1.0.4
-        if: ${{ needs.bump-semver.outputs.version != null }}
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          exclude_types: other,doc,chore
-          config_file: .github/changelog-config.js
       
       - name: Download Artifacts
         uses: actions/download-artifact@v3.0.0
@@ -147,26 +91,28 @@ jobs:
         run: |
           cd build
           for file in $(ls -I "*.zip"); do zip -r "${file}.zip" "$file"; done
-    
-      - name: Create Release
+          
+      - name: Create Draft Release
         id: create_release
-        uses: softprops/action-gh-release@v0.1.14
+        uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ needs.bump-semver.outputs.version }}
-          name: Release ${{ needs.bump-semver.outputs.version }}
-          body: |
-            ${{ steps.changelog.outputs.changelog }}
-          draft: false
-          prerelease: false
-          files: build/*.zip
+           config-name: release-drafter.yml
+           disable-autolabeler: false
+    
+      - name: Upload Builds to Release
+        uses: Fhwang0926/upload-release-asset@v1.1.8
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_name: build/*.zip
       
       - name: Create Comment about Release
         uses: actions-ecosystem/action-create-comment@v1.0.0
         if: ${{ needs.bump-semver.outputs.version != null }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          number: ${{ needs.bump-semver.outputs.number }}
           body: |
-            The new version [${{ needs.bump-semver.outputs.version }}](https://github.com/${{ github.repository }}/releases/tag/${{ needs.bump-semver.outputs.version }}) has been released :tada:
+            The new version [${{ steps.create_release.outputs.tag_name }}](https://github.com/${{ github.repository }}/releases/tag/${{ steps.create_release.outputs.tag_name }}) has been released :tada:

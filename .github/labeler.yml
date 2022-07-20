@@ -1,0 +1,14 @@
+version: 1
+labels:
+- label: "feature"
+  title: "Add.*|Create.*"
+- label: "bugfix"
+  title: "Fix.*|Bug.*"
+- label: "chore"
+  title: "Remove.*|Cleanup.*|Workflow.*"
+- label: "minor"
+  title: "Add.*|Create.*"
+- label: "patch"
+  title: "Fix.*|Bug.*"
+- label: "patch"
+  title: "Remove.*|Cleanup.*|Workflow.*"
