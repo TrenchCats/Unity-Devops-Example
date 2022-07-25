@@ -110,7 +110,7 @@ jobs:
           asset_name: build/*.zip
       
       - name: Create Comment about Release
-        uses: actions-ecosystem/action-create-comment@v1.0.0
+        uses: actions-ecosystem/action-create-comment@v1.0.2
         if: ${{ needs.bump-semver.outputs.version != null }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
