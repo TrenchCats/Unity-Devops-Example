@@ -102,7 +102,7 @@ jobs:
            disable-autolabeler: false
     
       - name: Upload Builds to Release
-        uses: Fhwang0926/upload-release-asset@v1.1.8
+        uses: Fhwang0926/upload-release-asset@v1.1.17
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
