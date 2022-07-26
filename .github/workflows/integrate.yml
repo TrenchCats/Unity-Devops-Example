@@ -62,7 +62,7 @@ jobs:
           fetch-depth: 0
 
       - name: Perform Linting
-        uses: github/super-linter@v4.9.4
+        uses: github/super-linter@v4.9.5
         env:
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_CSHARP: true
