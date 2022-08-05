@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Add Assignee
         uses: actions-ecosystem/action-add-assignees@v1
-        if: ${{ github.actor.name != 'dependabot' }}
+        if: github.actor != 'dependabot[bot]'
         with:
           github_token: ${{ secrets.github_token }}
           assignees: ${{ github.actor }}
@@ -38,7 +38,7 @@ jobs:
 
       - name: Validate Pull Request title
         uses: actions-ecosystem/action-regex-match@v2
-        if: ${{ github.actor.name != 'dependabot' }}
+        if: github.actor != 'dependabot[bot]'
         id: regex-match
         with:
           text: ${{ github.event.pull_request.title }}
