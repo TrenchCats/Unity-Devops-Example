@@ -1,0 +1,12 @@
+version: 1
+labels:
+- label: "feature"
+  title: "feat:"
+- label: "bugfix"
+  title: "fix:|bugfix:"
+- label: "chore"
+  title: "chore:"
+- label: "ci/cd"
+  title: "ci"
+- label: "documentation"
+  title: "doc"
