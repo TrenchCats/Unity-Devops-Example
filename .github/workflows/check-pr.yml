@@ -1,0 +1,61 @@
+name: Check Pull Request
+
+on:
+  pull_request:
+    types: [ opened, edited, reopened, synchronize ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  add-labels:
+    name: Label PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label PR
+        uses: srvaroa/labeler@v0.9
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+  assign:
+    name: Auto-Assign
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add Assignee
+        uses: actions-ecosystem/action-add-assignees@v1
+        if: ${{ github.actor.name != 'dependabot' }}
+        with:
+          github_token: ${{ secrets.github_token }}
+          assignees: ${{ github.actor }}
+
+  lint:
+    name: Lint Pull Request Title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Validate Pull Request title
+        uses: actions-ecosystem/action-regex-match@v2
+        if: ${{ github.actor.name != 'dependabot' }}
+        id: regex-match
+        with:
+          text: ${{ github.event.pull_request.title }}
+          regex: '(?:feat|fix|ci|chore|doc)\:\s.+'
+
+      - name: Create comment
+        uses: actions-ecosystem/action-create-comment@v1
+        if: ${{ steps.regex-match.outputs.match == '' }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            :warning: The title of this PR is invalid.
+
+            Please make the title match the regex `(?:feat|fix|ci|chore|doc)\:\s.+`.
+
+            e.g.) `add(cli): enable --verbose flag`, `fix(api): avoid unexpected error in handler`
+
+      - name: Fail workflow
+        if: ${{ steps.regex-match.outputs.match == '' }}
+        run: exit 1
