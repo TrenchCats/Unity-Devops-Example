@@ -21,10 +21,10 @@ jobs:
   assign:
     name: Auto-Assign
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
       - name: Add Assignee
         uses: actions-ecosystem/action-add-assignees@v1
-        if: github.actor != 'dependabot[bot]'
         with:
           github_token: ${{ secrets.github_token }}
           assignees: ${{ github.actor }}
@@ -32,13 +32,13 @@ jobs:
   lint:
     name: Lint Pull Request Title
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Validate Pull Request title
         uses: actions-ecosystem/action-regex-match@v2
-        if: github.actor != 'dependabot[bot]'
         id: regex-match
         with:
           text: ${{ github.event.pull_request.title }}
