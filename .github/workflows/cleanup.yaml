@@ -33,6 +33,7 @@ on:
 
 jobs:
   delete-workflow-runs:
+    name: Delete old workflow runs
     runs-on: ubuntu-latest
     steps:
       - name: Delete workflow runs
@@ -47,6 +48,7 @@ jobs:
           dry_run: ${{ github.event.inputs.dry_run }}
 
   delete-artifacts:
+    name: Delete old artifacts
     runs-on: ubuntu-latest
     steps:
       - uses: kolpav/purge-artifacts-action@v1
