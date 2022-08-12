@@ -42,7 +42,7 @@ jobs:
           lfs: true
 
       - name: Cache
-        uses: actions/cache@v3.0.6
+        uses: actions/cache@v3.0.7
         with:
           path: ${{ env.PROJECT_PATH }}/Library
           key: Library-${{ env.PROJECT_PATH }}
@@ -103,7 +103,7 @@ jobs:
           lfs: true
 
       - name: Cache files
-        uses: actions/cache@v3.0.6
+        uses: actions/cache@v3.0.7
         with:
           path: ${{ env.PROJECT_PATH }}/Library
           key: Library-${{ env.PROJECT_PATH }}-${{ matrix.targetPlatform }}
