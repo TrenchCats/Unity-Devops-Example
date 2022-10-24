@@ -128,7 +128,7 @@ jobs:
 
       - name: Create Changelog
         id: changelog
-        uses: loopwerk/tag-changelog@v1.0.4
+        uses: loopwerk/tag-changelog@v1.0.5
         if: ${{ needs.bump-semver.outputs.version != null }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
