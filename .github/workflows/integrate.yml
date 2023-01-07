@@ -13,8 +13,8 @@ concurrency:
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   UNITY_VERSION: 2021.3.6f1
-  PROJECT_PATH: Outback
-  PROJECT_NAME: Outback
+  PROJECT_PATH: Test
+  PROJECT_NAME: Test
 
 jobs:  
   check-license:
@@ -73,15 +73,15 @@ jobs:
          name: Test Results (All)
          path: ${{ steps.tests.outputs.artifactsPath }}
 
-      - name: Publish Code Coverage
-        uses: codecov/codecov-action@v3
-        with:
-          name: Code Coverage Results (All)
-          flags: automated
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: CodeCoverage/**/*.xml
-          fail_ci_if_error: true
-          verbose: true
+#      - name: Publish Code Coverage
+#        uses: codecov/codecov-action@v3
+#        with:
+#          name: Code Coverage Results (All)
+#          flags: automated
+#          token: ${{ secrets.CODECOV_TOKEN }}
+#          files: CodeCoverage/**/*.xml
+#          fail_ci_if_error: true
+#          verbose: true
 
   build:
     name: Build for ${{ matrix.targetPlatform }}
