@@ -20,8 +20,6 @@ jobs:
   check-license:
     name: Check for Unity License
     runs-on: ubuntu-latest
-    outputs:
-      is_unity_license_set: ${{ steps.check-license.outputs.is_unity_license_set }}
     steps:
       - name: Fail build if no unity license set
         if: ${{ env.UNITY_LICENSE == '' }}
