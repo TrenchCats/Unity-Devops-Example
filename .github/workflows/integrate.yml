@@ -13,27 +13,27 @@ concurrency:
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   UNITY_VERSION: 2021.3.6f1
-  PROJECT_PATH: Test
-  PROJECT_NAME: Test
+  PROJECT_PATH: Outback
+  PROJECT_NAME: Outback
 
-jobs:
+jobs:  
   check-license:
     name: Check for Unity License
     runs-on: ubuntu-latest
     outputs:
       is_unity_license_set: ${{ steps.check-license.outputs.is_unity_license_set }}
     steps:
-      - name: Check whether Unity Activation requests should be done
-        id: check-license
-        run: |
-          echo "Skip activation job: ${{ env.UNITY_LICENSE != '' }}"
-          echo "::set-output name=is_unity_license_set::${{ env.UNITY_LICENSE != '' }}"
+      - name: Fail build if no unity license set
+        if: ${{ env.UNITY_LICENSE == '' }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+              core.setFailed('No unity license secret set')
 
-  test-all-modes:
+  test:
     name: Run EditMode and PlayMode Tests
     runs-on: ubuntu-latest
     needs: [check-license]
-    if: ${{ needs.check-license.outputs.is_unity_license_set == 'true' }}
     strategy:
       fail-fast: true
     steps:
@@ -66,28 +66,27 @@ jobs:
           customParameters: -debugCodeOptimization
           coverageOptions: 'generateAdditionalMetrics'
 
-      - name: Upload Results
+      - name: Publish Test Results
         uses: actions/upload-artifact@v3.1.1
         if: always()
         with:
          name: Test Results (All)
          path: ${{ steps.tests.outputs.artifactsPath }}
 
-      # - name: Upload XML report to Codecov
-      #   uses: codecov/codecov-action@v3
-      #   with:
-      #     name: Code Coverage Results (All)
-      #     flags: automated
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     files: CodeCoverage/**/*.xml
-      #     fail_ci_if_error: true
-      #     verbose: true
+      - name: Publish Code Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          name: Code Coverage Results (All)
+          flags: automated
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: CodeCoverage/**/*.xml
+          fail_ci_if_error: true
+          verbose: true
 
   build:
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
     needs: [check-license]
-    if: ${{ needs.check-license.outputs.is_unity_license_set == 'true' }}
     strategy:
       fail-fast: false
       matrix:
