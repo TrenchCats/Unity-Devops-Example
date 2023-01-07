@@ -51,14 +51,13 @@ jobs:
   check-license:
     name: Check for Unity License
     runs-on: ubuntu-latest
-    outputs:
-      is_unity_license_set: ${{ steps.check-license.outputs.is_unity_license_set }}
     steps:
-      - name: Check whether Unity Activation requests should be done
-        id: check-license
-        run: |
-          echo "Skip activation job: ${{ env.UNITY_LICENSE != '' }}"
-          echo "::set-output name=is_unity_license_set::${{ env.UNITY_LICENSE != '' }}"
+      - name: Fail build if no unity license set
+        if: ${{ env.UNITY_LICENSE == '' }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+              core.setFailed('No unity license secret set')
 
   build:
     name: Build for ${{ matrix.targetPlatform }}
