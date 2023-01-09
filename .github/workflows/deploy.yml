@@ -97,7 +97,7 @@ jobs:
           version: ${{ needs.bump-semver.outputs.version }}
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3.1.1
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: Build
           path: build
