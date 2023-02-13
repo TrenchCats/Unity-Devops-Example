@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Label PR
-        uses: srvaroa/labeler@v0.9
+        uses: srvaroa/labeler@v1.0
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
