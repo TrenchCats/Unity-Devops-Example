@@ -141,6 +141,5 @@ jobs:
         with:
           tag_name: ${{ needs.bump-semver.outputs.version }}
           name: Release ${{ needs.bump-semver.outputs.version }}
-          body: |
-            ${{ steps.changelog.outputs.changelog }}
+          body: ${{ steps.changelog.outputs.changes }}
           files: build/*.zip
