@@ -65,7 +65,7 @@ jobs:
           coverageOptions: 'generateAdditionalMetrics'
 
       - name: Publish Test Results
-        uses: actions/upload-artifact@v4.0.0
+        uses: actions/upload-artifact@v4.3.0
         if: always()
         with:
          name: Test Results (All)
@@ -122,7 +122,7 @@ jobs:
       #     targetPlatform: ${{ matrix.targetPlatform }}
 
       # - name: Upload Artifacts
-      #   uses: actions/upload-artifact@v4.0.0
+      #   uses: actions/upload-artifact@v4.3.0
       #   with:
       #     name: Build-${{ matrix.targetPlatform }}
       #     path: build/${{ matrix.targetPlatform }}
